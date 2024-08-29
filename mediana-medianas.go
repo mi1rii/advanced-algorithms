@@ -3,35 +3,52 @@ package main
 import ("fmt")
 
 // particiona la lista en sublistas de tamaño 5
-func particionar(lista []int) [][]int{
+func particionar(lista []int) [][]int {
 	var sublistas [][]int
-	n:= len(lista)
-	for j:= 0; j < n; j+=5 {
-		end:= j + 5
+	n := len(lista)
+	for j := 0; j < n; j += 5 {
+		end := j + 5
 		if end > n {
 			end = n
 		}
-		sublista:= lista[j:end]
+		sublista := lista[j:end]
 		sublistas = append(sublistas, sublista)
 	}
 	return sublistas
 }
 
-// busca la mediana
-//func buscarMediana(lst []int) int {
-//	tamañoLista:= len(lst)
-//	for j:=0; j < tamañoLista; j++ {
-//		for k:= j + 1; k < tamañoLista; k++ {
-//			if lst[j] > lst[k] {
-//				lst[j], lst[k] = lst[k], lst[j]
-//			}
-//		}
-//	}
-//	return lst[tamañoLista / 2]
-//}
+// busca sus medianas
+func buscarMediana(lst []int) int {
+	tamañoLista := len(lst)
+	for j := 0; j < tamañoLista; j++ {
+		for k := j + 1; k < tamañoLista; k++ {
+			if lst[j] > lst[k] {
+				lst[j], lst[k] = lst[k], lst[j]
+			}
+		}
+	}
+	return lst[tamañoLista/2]
+}
+
+// hace ya el calculo de la mediana de las medianas
+func medianaMedianas(lista []int) int {
+	sublistas := particionar(lista) // acá se hace lo de particionar en sublistas
+	var medianas []int // y sacar sus medianas
+
+	for _, sublista := range sublistas {
+		medianas = append(medianas, buscarMediana(sublista))
+	}
+
+	if len(medianas) <= 5 { // acá encontramos el pivote
+		return buscarMediana(medianas)
+	} else {
+		return medianaMedianas(medianas)
+	}
+}
 
 func main() {
-	lista:= []int{74652, 39596, 56876, 401, 19068, 56898, 20748, 21452, 37916, 29477, 66853,
+	// lista enormisisma
+	lista := []int{74652, 39596, 56876, 401, 19068, 56898, 20748, 21452, 37916, 29477, 66853,
 		92786, 77479, 92449, 98008, 66610, 46879, 57874, 62114, 40844, 46489, 8063,
 		35178, 17195, 6032, 93908, 9267, 74368, 20080, 78503, 89810, 33363, 30939,
 		47178, 72505, 69551, 11840, 52397, 53793, 76896, 50536, 64890, 28865, 24097,
@@ -9080,11 +9097,5 @@ func main() {
 		96615, 79102, 83386, 11279, 65298, 53545, 18107, 77437, 84463, 31610, 56068,
 		56192, 55165, 22766, 47808, 29360, 59948, 47755, 35055, 47108, 32896, 36661,
 		85933, 77518, 87494, 42135, 71978, 44039}
-	sublistas:= particionar(lista)
-	fmt.Println(sublistas)
-
-//	for _, sublista:= range sublistas {
-//		mediana:= buscarMediana(sublista)
-//		fmt.Println(mediana)
-//	}
+	fmt.Println(medianaMedianas(lista))
 }
